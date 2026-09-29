@@ -13,7 +13,7 @@ body {
 .container {
     max-width: 500px;
     margin: 0 auto;
-    padding: 80px 20px;
+    padding: 70px 20px;
 }
 
 h1 {
@@ -24,7 +24,7 @@ h1 {
 p {
     color: #ccc;
     font-size: 18px;
-    margin-bottom: 35px;
+    margin-bottom: 25px;
 }
 
 button {
@@ -45,6 +45,28 @@ button:hover {
     opacity: 0.8;
 }
 
+input {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 15px auto;
+    padding: 16px;
+    background: #171717;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 12px;
+    font-size: 16px;
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
 .versteckt {
     display: none;
+}
+
+#meldung {
+    margin-top: 20px;
+    font-size: 16px;
 }
