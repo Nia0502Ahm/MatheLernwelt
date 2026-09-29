@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://yieuzinerctdldxrdivq.supabase.co/rest/v1/";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable__1wbJQPS4FgSpqk3cL5X7w_ZndM5UWZ";
+const SUPABASE_PUBLISHABLE_KEY =  "sb_publishable__1wbJQPS4FgSpqk3cL5X7w_ZndM5UWZ";
 
 function zeigeSprachen() {
     document.getElementById("startseite").classList.add("versteckt");
