@@ -4,17 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MatheLernwelt</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <div class="container">
+    <!-- Startseite -->
+    <div id="startseite" class="container">
         <h1>MatheLernwelt</h1>
         <p>Mathe lernen von Klasse 5 bis Abitur</p>
 
-        <button>Starten</button>
+        <button onclick="zeigeSprachen()">Starten</button>
     </div>
+
+    <!-- Sprachauswahl -->
+    <div id="sprachen" class="container versteckt">
+        <h1>Sprache auswählen</h1>
+
+        <button onclick="spracheAuswaehlen('de')">
+            🇩🇪 Deutsch
+        </button>
+
+        <button onclick="spracheAuswaehlen('en')">
+            🇬🇧 English
+        </button>
+
+        <button onclick="spracheAuswaehlen('ps')">
+            🇦🇫 پښتو
+        </button>
+    </div>
+
+    <script src="app.js"></script>
 
 </body>
 </html>
