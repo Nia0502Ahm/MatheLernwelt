@@ -1,52 +1,176 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>MatheLernwelt</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- Startseite -->
+    <!-- ========================= -->
+    <!-- STARTSEITE -->
+    <!-- ========================= -->
+
     <div id="startseite" class="container">
+
         <h1>MatheLernwelt</h1>
-        <p>Mathe lernen von Klasse 5 bis Abitur</p>
-        <button onclick="zeigeSprachen()">Starten</button>
+
+        <p>
+            Mathe lernen von Klasse 5 bis Abitur
+        </p>
+
+        <button onclick="zeigeSprachen()">
+            Starten
+        </button>
+
     </div>
 
-    <!-- Sprachauswahl -->
+
+    <!-- ========================= -->
+    <!-- SPRACHAUSWAHL -->
+    <!-- ========================= -->
+
     <div id="sprachen" class="container versteckt">
-        <h1 id="sprachTitel">Sprache auswählen</h1>
 
-        <button onclick="spracheAuswaehlen('de')">🇩🇪 Deutsch</button>
-        <button onclick="spracheAuswaehlen('en')">🇬🇧 English</button>
-        <button onclick="spracheAuswaehlen('ps')">🇦🇫 پښتو</button>
+        <h1>
+            Sprache auswählen
+        </h1>
+
+        <button onclick="spracheAuswaehlen('de')">
+            🇩🇪 Deutsch
+        </button>
+
+        <button onclick="spracheAuswaehlen('en')">
+            🇬🇧 English
+        </button>
+
+        <button onclick="spracheAuswaehlen('ps')">
+            🇦🇫 پښتو
+        </button>
+
     </div>
 
- <!-- Klassenauswahl -->
-<div id="klassen" class="container versteckt">
-    <h1 id="klassenTitel">Wähle deine Klasse</h1>
-    <p id="klassenText">Wähle eine Klasse aus:</p>
 
-    <div class="klassenListe">
-        <button onclick="klasseAuswaehlen(5)">Klasse 5</button>
-        <button onclick="klasseAuswaehlen(6)">Klasse 6</button>
-        <button onclick="klasseAuswaehlen(7)">Klasse 7</button>
-        <button onclick="klasseAuswaehlen(8)">Klasse 8</button>
-        <button onclick="klasseAuswaehlen(9)">Klasse 9</button>
-        <button onclick="klasseAuswaehlen(10)">Klasse 10</button>
-        <button onclick="klasseAuswaehlen(11)">Klasse 11</button>
-        <button onclick="klasseAuswaehlen(12)">Klasse 12</button>
-        <button onclick="klasseAuswaehlen(13)">Klasse 13 / Abitur</button>
+    <!-- ========================= -->
+    <!-- ANMELDUNG -->
+    <!-- ========================= -->
+
+    <div id="anmeldung" class="container versteckt">
+
+        <h1 id="loginTitel">
+            Anmelden
+        </h1>
+
+        <input
+            id="email"
+            type="email"
+            placeholder="E-Mail"
+        >
+
+        <input
+            id="passwort"
+            type="password"
+            placeholder="Passwort"
+        >
+
+        <button
+            id="loginButton"
+            onclick="anmelden()"
+        >
+            Einloggen
+        </button>
+
+        <p id="registerText">
+            Noch kein Konto?
+        </p>
+
+        <button
+            id="registerButton"
+            onclick="registrieren()"
+        >
+            Registrieren
+        </button>
+
+        <p id="meldung"></p>
+
     </div>
 
-    <p id="klassenMeldung"></p>
-</div>
+
+    <!-- ========================= -->
+    <!-- KLASSENAUSWAHL -->
+    <!-- ========================= -->
+
+    <div id="klassen" class="container versteckt">
+
+        <h1 id="klassenTitel">
+            Wähle deine Klasse
+        </h1>
+
+        <p id="klassenText">
+            Wähle eine Klasse aus:
+        </p>
+
+
+        <div class="klassenListe">
+
+            <button onclick="klasseAuswaehlen(5)">
+                Klasse 5
+            </button>
+
+            <button onclick="klasseAuswaehlen(6)">
+                Klasse 6
+            </button>
+
+            <button onclick="klasseAuswaehlen(7)">
+                Klasse 7
+            </button>
+
+            <button onclick="klasseAuswaehlen(8)">
+                Klasse 8
+            </button>
+
+            <button onclick="klasseAuswaehlen(9)">
+                Klasse 9
+            </button>
+
+            <button onclick="klasseAuswaehlen(10)">
+                Klasse 10
+            </button>
+
+            <button onclick="klasseAuswaehlen(11)">
+                Klasse 11
+            </button>
+
+            <button onclick="klasseAuswaehlen(12)">
+                Klasse 12
+            </button>
+
+            <button onclick="klasseAuswaehlen(13)">
+                Klasse 13 / Abitur
+            </button>
+
+        </div>
+
+
+        <p id="klassenMeldung"></p>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- SUPABASE -->
+    <!-- ========================= -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- UNSER JAVASCRIPT -->
     <script src="app.js"></script>
 
 </body>
+
 </html>
