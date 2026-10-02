@@ -3,12 +3,13 @@
 // ==========================================
 
 const SUPABASE_URL = "https://yieuzinerctdldxrdivq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable__1wbJQPS4FgSpqk3cL5X7w_ZndM5UWZ";
+const SUPABASE_PUBLISHABLE_KEY =  "sb_publishable__1wbJQPS4FgSpqk3cL5X7w_ZndM5UWZ";
 
 const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
 );
+
 
 // Aktuelle Sprache
 let aktuelleSprache = "de";
@@ -19,7 +20,9 @@ let aktuelleSprache = "de";
 // ==========================================
 
 function zeigeSprachen() {
+
     document.getElementById("startseite").classList.add("versteckt");
+
     document.getElementById("sprachen").classList.remove("versteckt");
 }
 
@@ -33,8 +36,11 @@ function spracheAuswaehlen(sprache) {
     aktuelleSprache = sprache;
 
     document.getElementById("sprachen").classList.add("versteckt");
+
     document.getElementById("anmeldung").classList.remove("versteckt");
 
+
+    // DEUTSCH
     if (sprache === "de") {
 
         document.getElementById("loginTitel").textContent =
@@ -57,6 +63,7 @@ function spracheAuswaehlen(sprache) {
     }
 
 
+    // ENGLISH
     if (sprache === "en") {
 
         document.getElementById("loginTitel").textContent =
@@ -79,6 +86,7 @@ function spracheAuswaehlen(sprache) {
     }
 
 
+    // PASHTO
     if (sprache === "ps") {
 
         document.getElementById("loginTitel").textContent =
@@ -121,16 +129,17 @@ async function registrieren() {
     if (!email || !passwort) {
 
         if (aktuelleSprache === "en") {
+
             meldung.textContent =
                 "Please enter email and password.";
-        }
 
-        else if (aktuelleSprache === "ps") {
+        } else if (aktuelleSprache === "ps") {
+
             meldung.textContent =
                 "مهرباني وکړئ برېښنالیک او پټ نوم ولیکئ.";
-        }
 
-        else {
+        } else {
+
             meldung.textContent =
                 "Bitte E-Mail und Passwort eingeben.";
         }
@@ -158,15 +167,13 @@ async function registrieren() {
 
         meldung.textContent =
             "Account created successfully!";
-    }
 
-    else if (aktuelleSprache === "ps") {
+    } else if (aktuelleSprache === "ps") {
 
         meldung.textContent =
             "ستاسو حساب په بریالیتوب سره جوړ شو!";
-    }
 
-    else {
+    } else {
 
         meldung.textContent =
             "Konto wurde erfolgreich erstellt!";
@@ -196,15 +203,13 @@ async function anmelden() {
 
             meldung.textContent =
                 "Please enter email and password.";
-        }
 
-        else if (aktuelleSprache === "ps") {
+        } else if (aktuelleSprache === "ps") {
 
             meldung.textContent =
                 "مهرباني وکړئ برېښنالیک او پټ نوم ولیکئ.";
-        }
 
-        else {
+        } else {
 
             meldung.textContent =
                 "Bitte E-Mail und Passwort eingeben.";
@@ -231,7 +236,7 @@ async function anmelden() {
 
     // ==========================================
     // LOGIN ERFOLGREICH
-    // → KLASSENAUSWAHL ANZEIGEN
+    // KLASSENAUSWAHL ANZEIGEN
     // ==========================================
 
     document
@@ -243,8 +248,7 @@ async function anmelden() {
         .classList.remove("versteckt");
 
 
-    // Deutsch
-
+    // Titel und Text der Klassenauswahl
     if (aktuelleSprache === "de") {
 
         document.getElementById("klassenTitel").textContent =
@@ -252,30 +256,82 @@ async function anmelden() {
 
         document.getElementById("klassenText").textContent =
             "Wähle eine Klasse aus:";
-    }
 
-
-    // English
-
-    if (aktuelleSprache === "en") {
+    } else if (aktuelleSprache === "en") {
 
         document.getElementById("klassenTitel").textContent =
             "Choose your class";
 
         document.getElementById("klassenText").textContent =
             "Select a class:";
-    }
 
-
-    // Pashto
-
-    if (aktuelleSprache === "ps") {
+    } else if (aktuelleSprache === "ps") {
 
         document.getElementById("klassenTitel").textContent =
             "خپل ټولګی وټاکئ";
 
         document.getElementById("klassenText").textContent =
             "یو ټولګی وټاکئ:";
+    }
+
+
+    // Klassen in der richtigen Sprache anzeigen
+    klassenSpracheSetzen();
+}
+
+
+// ==========================================
+// KLASSEN-SPRACHE
+// ==========================================
+
+function klassenSpracheSetzen() {
+
+    const buttons =
+        document.querySelectorAll(".klassenListe button");
+
+
+    // DEUTSCH
+    if (aktuelleSprache === "de") {
+
+        buttons[0].textContent = "Klasse 5";
+        buttons[1].textContent = "Klasse 6";
+        buttons[2].textContent = "Klasse 7";
+        buttons[3].textContent = "Klasse 8";
+        buttons[4].textContent = "Klasse 9";
+        buttons[5].textContent = "Klasse 10";
+        buttons[6].textContent = "Klasse 11";
+        buttons[7].textContent = "Klasse 12";
+        buttons[8].textContent = "Klasse 13 / Abitur";
+    }
+
+
+    // ENGLISH
+    if (aktuelleSprache === "en") {
+
+        buttons[0].textContent = "Grade 5";
+        buttons[1].textContent = "Grade 6";
+        buttons[2].textContent = "Grade 7";
+        buttons[3].textContent = "Grade 8";
+        buttons[4].textContent = "Grade 9";
+        buttons[5].textContent = "Grade 10";
+        buttons[6].textContent = "Grade 11";
+        buttons[7].textContent = "Grade 12";
+        buttons[8].textContent = "Grade 13 / Abitur";
+    }
+
+
+    // PASHTO
+    if (aktuelleSprache === "ps") {
+
+        buttons[0].textContent = "۵ ټولګی";
+        buttons[1].textContent = "۶ ټولګی";
+        buttons[2].textContent = "۷ ټولګی";
+        buttons[3].textContent = "۸ ټولګی";
+        buttons[4].textContent = "۹ ټولګی";
+        buttons[5].textContent = "۱۰ ټولګی";
+        buttons[6].textContent = "۱۱ ټولګی";
+        buttons[7].textContent = "۱۲ ټولګی";
+        buttons[8].textContent = "۱۳ ټولګی / ابیتور";
     }
 }
 
@@ -293,18 +349,14 @@ function klasseAuswaehlen(klasse) {
     if (aktuelleSprache === "en") {
 
         meldung.textContent =
-            "Class " + klasse + " selected!";
-    }
+            "Grade " + klasse + " selected!";
 
-
-    else if (aktuelleSprache === "ps") {
+    } else if (aktuelleSprache === "ps") {
 
         meldung.textContent =
             "ټولګی " + klasse + " وټاکل شو!";
-    }
 
-
-    else {
+    } else {
 
         meldung.textContent =
             "Klasse " + klasse + " ausgewählt!";
