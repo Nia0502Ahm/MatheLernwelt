@@ -25,22 +25,25 @@
         <button onclick="spracheAuswaehlen('ps')">🇦🇫 پښتو</button>
     </div>
 
-    <!-- Anmeldung -->
-    <div id="anmeldung" class="container versteckt">
-        <h1 id="loginTitel">Anmelden</h1>
+ <!-- Klassenauswahl -->
+<div id="klassen" class="container versteckt">
+    <h1 id="klassenTitel">Wähle deine Klasse</h1>
+    <p id="klassenText">Wähle eine Klasse aus:</p>
 
-        <input id="email" type="email" placeholder="E-Mail">
-        <input id="passwort" type="password" placeholder="Passwort">
-
-        <button onclick="anmelden()" id="loginButton">Einloggen</button>
-
-        <p id="registerText">Noch kein Konto?</p>
-        <button onclick="registrieren()" id="registerButton">
-            Registrieren
-        </button>
-
-        <p id="meldung"></p>
+    <div class="klassenListe">
+        <button onclick="klasseAuswaehlen(5)">Klasse 5</button>
+        <button onclick="klasseAuswaehlen(6)">Klasse 6</button>
+        <button onclick="klasseAuswaehlen(7)">Klasse 7</button>
+        <button onclick="klasseAuswaehlen(8)">Klasse 8</button>
+        <button onclick="klasseAuswaehlen(9)">Klasse 9</button>
+        <button onclick="klasseAuswaehlen(10)">Klasse 10</button>
+        <button onclick="klasseAuswaehlen(11)">Klasse 11</button>
+        <button onclick="klasseAuswaehlen(12)">Klasse 12</button>
+        <button onclick="klasseAuswaehlen(13)">Klasse 13 / Abitur</button>
     </div>
+
+    <p id="klassenMeldung"></p>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="app.js"></script>
