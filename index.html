@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="de">
 
@@ -11,323 +12,188 @@
 
     <title>MatheLernwelt</title>
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-</head>
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
 
 <body>
 
+    <!-- =====================================================
+         STARTSEITE
+    ====================================================== -->
 
-    <!-- ================================= -->
-    <!-- STARTSEITE -->
-    <!-- ================================= -->
+    <section id="startseite" class="seite">
 
-    <div
-        id="startseite"
-        class="container"
-    >
+        <div class="karte">
 
-        <h1>
-            MatheLernwelt
-        </h1>
+            <h1>MatheLernwelt</h1>
 
-        <p>
-            Mathe lernen von Klasse 5 bis Abitur
-        </p>
+            <p>
+                Mathe lernen von Klasse 5 bis Abitur
+            </p>
 
-        <button onclick="zeigeSprachen()">
-            Starten
-        </button>
+            <button onclick="zeigeSprachen()">
+                Starten
+            </button>
 
-    </div>
+        </div>
+
+    </section>
 
 
+    <!-- =====================================================
+         SPRACHWAHL
+    ====================================================== -->
 
-    <!-- ================================= -->
-    <!-- SPRACHAUSWAHL -->
-    <!-- ================================= -->
-
-    <div
+    <section
         id="sprachen"
-        class="container versteckt"
+        class="seite versteckt"
     >
 
-        <h1 id="sprachTitel">
-            Sprache auswählen
-        </h1>
+        <div class="karte">
+
+            <h2 id="spracheTitel">
+                Sprache auswählen
+            </h2>
+
+            <button
+                onclick="spracheAuswaehlen('de')"
+            >
+                🇩🇪 Deutsch
+            </button>
+
+            <button
+                onclick="spracheAuswaehlen('en')"
+            >
+                🇬🇧 English
+            </button>
+
+            <button
+                onclick="spracheAuswaehlen('ps')"
+            >
+                🇦🇫 پښتو
+            </button>
+
+        </div>
+
+    </section>
 
 
-        <button
-            onclick="spracheAuswaehlen('de')"
-        >
-            🇩🇪 Deutsch
-        </button>
+    <!-- =====================================================
+         ANMELDUNG
+    ====================================================== -->
 
-
-        <button
-            onclick="spracheAuswaehlen('en')"
-        >
-            🇬🇧 English
-        </button>
-
-
-        <button
-            onclick="spracheAuswaehlen('ps')"
-        >
-            🇦🇫 پښتو
-        </button>
-
-    </div>
-
-
-
-    <!-- ================================= -->
-    <!-- ANMELDUNG -->
-    <!-- ================================= -->
-
-    <div
+    <section
         id="anmeldung"
-        class="container versteckt"
+        class="seite versteckt"
     >
 
-        <h1 id="loginTitel">
-            Anmelden
-        </h1>
+        <div class="karte">
+
+            <h2 id="anmeldeTitel">
+                Anmelden
+            </h2>
+
+            <input
+                id="email"
+                type="email"
+                placeholder="E-Mail"
+                autocomplete="email"
+            >
+
+            <input
+                id="passwort"
+                type="password"
+                placeholder="Passwort"
+                autocomplete="current-password"
+            >
+
+            <button onclick="anmelden()">
+                Einloggen
+            </button>
+
+            <button onclick="registrieren()">
+                Konto erstellen
+            </button>
+
+            <button
+                class="sekundaer"
+                onclick="zeigeSprachen()"
+            >
+                Zurück
+            </button>
+
+        </div>
+
+    </section>
 
 
-        <input
-            id="email"
-            type="email"
-            placeholder="E-Mail"
-        >
+    <!-- =====================================================
+         KLASSENAUSWAHL
+    ====================================================== -->
 
-
-        <input
-            id="passwort"
-            type="password"
-            placeholder="Passwort"
-        >
-
-
-        <button
-            id="loginButton"
-            onclick="anmelden()"
-        >
-            Einloggen
-        </button>
-
-
-        <p id="registerText">
-            Noch kein Konto?
-        </p>
-
-
-        <button
-            id="registerButton"
-            onclick="registrieren()"
-        >
-            Registrieren
-        </button>
-
-
-        <p id="meldung"></p>
-
-    </div>
-
-
-
-    <!-- ================================= -->
-    <!-- KLASSENAUSWAHL -->
-    <!-- ================================= -->
-
-    <div
+    <section
         id="klassen"
-        class="container versteckt"
+        class="seite versteckt"
     >
 
-        <h1 id="klassenTitel">
-            Wähle deine Klasse
-        </h1>
+        <!-- Wird von App.js gefüllt -->
+
+    </section>
 
 
-        <p id="klassenText">
-            Wähle eine Klasse aus:
-        </p>
+    <!-- =====================================================
+         THEMEN
+    ====================================================== -->
 
-
-        <div class="klassenListe">
-
-
-            <button
-                onclick="klasseAuswaehlen(5)"
-            >
-                Klasse 5
-            </button>
-
-
-            <button
-                onclick="klasseAuswaehlen(6)"
-            >
-                Klasse 6
-            </button>
-
-
-            <button
-                onclick="klasseAuswaehlen(7)"
-            >
-                Klasse 7
-            </button>
-
-
-            <button
-                onclick="klasseAuswaehlen(8)"
-            >
-                Klasse 8
-            </button>
-
-
-            <button
-                onclick="klasseAuswaehlen(9)"
-            >
-                Klasse 9
-            </button>
-
-
-            <button
-                onclick="klasseAuswaehlen(10)"
-            >
-                Klasse 10
-            </button>
-
-
-            <button
-                onclick="klasseAuswaehlen(11)"
-            >
-                Klasse 11
-            </button>
-
-
-            <button
-                onclick="klasseAuswaehlen(12)"
-            >
-                Klasse 12
-            </button>
-
-
-            <button
-                onclick="klasseAuswaehlen(13)"
-            >
-                Klasse 13 / Abitur
-            </button>
-
-        </div>
-
-
-        <p id="klassenMeldung"></p>
-
-    </div>
-
-
-
-    <!-- ================================= -->
-    <!-- THEMEN -->
-    <!-- ================================= -->
-
-    <div
+    <section
         id="themen"
-        class="container versteckt"
+        class="seite versteckt"
     >
 
-        <h1 id="themenTitel">
-            Klasse 13 / Abitur
-        </h1>
+        <!-- Wird von App.js gefüllt -->
+
+    </section>
 
 
-        <p id="themenText">
-            Wähle ein Thema:
-        </p>
+    <!-- =====================================================
+         AUFGABEN
+    ====================================================== -->
+
+    <section
+        id="aufgaben"
+        class="seite versteckt"
+    >
+
+        <!-- Wird von App.js gefüllt -->
+
+    </section>
 
 
-        <div class="themenListe">
+    <!-- =====================================================
+         ERGEBNIS
+    ====================================================== -->
+
+    <section
+        id="ergebnis"
+        class="seite versteckt"
+    >
+
+        <!-- Wird von App.js gefüllt -->
+
+    </section>
 
 
-            <button id="thema1">
-                Thema 1
-            </button>
+    <!-- =====================================================
+         APP.JS
+    ====================================================== -->
 
-
-            <button id="thema2">
-                Thema 2
-            </button>
-
-
-            <button id="thema3">
-                Thema 3
-            </button>
-
-
-            <button id="thema4">
-                Thema 4
-            </button>
-
-
-            <button id="thema5">
-                Thema 5
-            </button>
-
-
-            <button id="thema6">
-                Thema 6
-            </button>
-
-
-            <button id="thema7">
-                Thema 7
-            </button>
-
-
-            <button id="thema8">
-                Thema 8
-            </button>
-
-
-            <button id="thema9">
-                Thema 9
-            </button>
-
-
-            <button id="thema10">
-                Thema 10
-            </button>
-
-        </div>
-
-
-        <p id="themenMeldung"></p>
-
-    </div>
-
-
-
-    <!-- ================================= -->
-    <!-- SUPABASE -->
-    <!-- ================================= -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
-
-
-    <!-- ================================= -->
-    <!-- APP.JS -->
-    <!-- ================================= -->
-
-    <script src="app.js"></script>
-
+    <script src="App.js"></script>
 
 </body>
 
 </html>
+```
