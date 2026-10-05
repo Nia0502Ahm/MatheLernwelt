@@ -9,6 +9,8 @@ const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
 );
+
+
 // ============================================================
 // MATHE LERNWELT
 // KLASSE 5 – 300 FRAGEN
