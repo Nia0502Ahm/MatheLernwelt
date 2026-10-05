@@ -1,3 +1,14 @@
+// ==========================================
+// SUPABASE
+// ==========================================
+
+const SUPABASE_URL = "https://yieuzinerctdldxrdivq.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY =  "sb_publishable__1wbJQPS4FgSpqk3cL5X7w_ZndM5UWZ";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+);
 // ============================================================
 // MATHE LERNWELT
 // KLASSE 5 – 300 FRAGEN
