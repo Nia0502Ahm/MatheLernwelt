@@ -1,1325 +1,1597 @@
 // ============================================================
-// MATHE LERNWELT – APP.JS
-// Deutsch / English / پښتو
+// MatheLernwelt - App.js
+// Deutsch 🇩🇪 | English 🇬🇧 | پښتو 🇦🇫
+// Klassen 5 - 13 / Abitur
 // ============================================================
 
-
-// ============================================================
+// ------------------------------------------------------------
 // SUPABASE
-// ============================================================
+// ------------------------------------------------------------
+// HIER DEINE SUPABASE-DATEN EINTRAGEN
+// ------------------------------------------------------------
 
 const SUPABASE_URL = "https://yieuzinerctdldxrdivq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY =  "sb_publishable__1wbJQPS4FgSpqk3cL5X7w_ZndM5UWZ";
+const SUPABASE_KEY =  "sb_publishable__1wbJQPS4FgSpqk3cL5X7w_ZndM5UWZ";
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-);
+let supabaseClient = null;
 
+try {
+    if (
+        SUPABASE_URL &&
+        SUPABASE_KEY &&
+        SUPABASE_URL !== "DEINE_SUPABASE_URL" &&
+        SUPABASE_KEY !== "DEIN_SUPABASE_PUBLISHABLE_KEY"
+    ) {
+        supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+    }
+} catch (error) {
+    console.error("Supabase Fehler:", error);
+}
 
-// ============================================================
-// APP-VARIABLEN
-// ============================================================
+// ------------------------------------------------------------
+// SPRACHE
+// ------------------------------------------------------------
 
 let aktuelleSprache = "de";
-let gewaehlteKlasse = 5;
-let aktuellesThema = 0;
-let aktuelleFrage = 0;
-let richtigePosition = 0;
-let antwortGegeben = false;
 
+const texte = {
 
-// ============================================================
+    de: {
+        titel: "MatheLernwelt",
+        untertitel: "Mathe lernen von Klasse 5 bis Abitur",
+        starten: "Starten",
+        sprache: "Sprache auswählen",
+        deutsch: "Deutsch",
+        englisch: "English",
+        pashto: "پښتو",
+
+        anmelden: "Anmelden",
+        registrieren: "Registrieren",
+        email: "E-Mail",
+        passwort: "Passwort",
+        anmeldenButton: "Einloggen",
+        registrierenButton: "Konto erstellen",
+        abmelden: "Abmelden",
+
+        willkommen: "Willkommen bei MatheLernwelt!",
+        klasseWaehlen: "Wähle deine Klasse",
+        zurueck: "Zurück",
+
+        themen: "Themen",
+        themaWaehlen: "Wähle ein Thema",
+
+        aufgabe: "Aufgabe",
+        antwort: "Antwort",
+        weiter: "Weiter",
+        pruefen: "Antwort prüfen",
+        richtig: "Richtig! 🎉",
+        falsch: "Leider falsch.",
+        erklaerung: "Erklärung",
+        fertig: "Du bist fertig!",
+        nochmal: "Nochmal versuchen",
+
+        keineFragen: "Für dieses Thema sind noch keine Fragen vorhanden."
+    },
+
+    en: {
+        titel: "MathLearningWorld",
+        untertitel: "Learn mathematics from grade 5 to Abitur",
+        starten: "Start",
+        sprache: "Choose language",
+        deutsch: "Deutsch",
+        englisch: "English",
+        pashto: "پښتو",
+
+        anmelden: "Login",
+        registrieren: "Register",
+        email: "Email",
+        passwort: "Password",
+        anmeldenButton: "Log in",
+        registrierenButton: "Create account",
+        abmelden: "Log out",
+
+        willkommen: "Welcome to MathLearningWorld!",
+        klasseWaehlen: "Choose your grade",
+        zurueck: "Back",
+
+        themen: "Topics",
+        themaWaehlen: "Choose a topic",
+
+        aufgabe: "Question",
+        antwort: "Answer",
+        weiter: "Next",
+        pruefen: "Check answer",
+        richtig: "Correct! 🎉",
+        falsch: "Unfortunately incorrect.",
+        erklaerung: "Explanation",
+        fertig: "You are finished!",
+        nochmal: "Try again",
+
+        keineFragen: "There are no questions for this topic yet."
+    },
+
+    ps: {
+        titel: "MatheLernwelt",
+        untertitel: "له پنځم ټولګي څخه تر ابیتور پورې ریاضي زده کړئ",
+        starten: "پیل",
+        sprache: "ژبه وټاکئ",
+        deutsch: "Deutsch",
+        englisch: "English",
+        pashto: "پښتو",
+
+        anmelden: "ننوتل",
+        registrieren: "نوی حساب",
+        email: "ایمیل",
+        passwort: "پټ نوم",
+        anmeldenButton: "ننوتل",
+        registrierenButton: "حساب جوړول",
+        abmelden: "وتل",
+
+        willkommen: "MatheLernwelt ته ښه راغلاست!",
+        klasseWaehlen: "خپل ټولګی وټاکئ",
+        zurueck: "شاته",
+
+        themen: "موضوعات",
+        themaWaehlen: "یوه موضوع وټاکئ",
+
+        aufgabe: "پوښتنه",
+        antwort: "ځواب",
+        weiter: "بلې پوښتنې ته",
+        pruefen: "ځواب وګورئ",
+        richtig: "سم ځواب! 🎉",
+        falsch: "له بده مرغه ناسم ځواب.",
+        erklaerung: "تشریح",
+        fertig: "تاسو بشپړ کړل!",
+        nochmal: "بیا هڅه وکړئ",
+
+        keineFragen: "د دې موضوع لپاره لا پوښتنې نشته."
+    }
+};
+
+// ------------------------------------------------------------
+// HILFSFUNKTION
+// ------------------------------------------------------------
+
+function t(key) {
+    return texte[aktuelleSprache][key] || key;
+}
+
+// ------------------------------------------------------------
 // KLASSEN
-// ============================================================
+// ------------------------------------------------------------
 
-const klassen = {
+const klassen = [
 
-    5: {
+    {
+        id: 5,
         de: "Klasse 5",
         en: "Grade 5",
         ps: "پنځم ټولګی"
     },
 
-    6: {
+    {
+        id: 6,
         de: "Klasse 6",
         en: "Grade 6",
         ps: "شپږم ټولګی"
     },
 
-    7: {
+    {
+        id: 7,
         de: "Klasse 7",
         en: "Grade 7",
         ps: "اووم ټولګی"
     },
 
-    8: {
+    {
+        id: 8,
         de: "Klasse 8",
         en: "Grade 8",
         ps: "اتم ټولګی"
     },
 
-    9: {
+    {
+        id: 9,
         de: "Klasse 9",
         en: "Grade 9",
         ps: "نهم ټولګی"
     },
 
-    10: {
+    {
+        id: 10,
         de: "Klasse 10",
         en: "Grade 10",
         ps: "لسم ټولګی"
     },
 
-    11: {
+    {
+        id: 11,
         de: "Klasse 11",
         en: "Grade 11",
-        ps: "یوولسم ټولګی"
+        ps: "یولسم ټولګی"
     },
 
-    12: {
+    {
+        id: 12,
         de: "Klasse 12",
         en: "Grade 12",
         ps: "دولسم ټولګی"
     },
 
-    13: {
+    {
+        id: 13,
         de: "Klasse 13 / Abitur",
         en: "Grade 13 / Abitur",
         ps: "دیارلسم ټولګی / ابیتور"
     }
 
-};
+];
 
+// ------------------------------------------------------------
+// 10 THEMEN PRO KLASSE
+// ------------------------------------------------------------
 
-// ============================================================
-// THEMEN
-// ============================================================
-
-const themen = {
+const themenListe = {
 
     5: [
-        {
-            de: "Natürliche Zahlen",
-            en: "Natural Numbers",
-            ps: "طبیعي شمېرې"
-        },
-        {
-            de: "Grundrechenarten",
-            en: "Basic Arithmetic",
-            ps: "اساسي حساب"
-        },
-        {
-            de: "Brüche",
-            en: "Fractions",
-            ps: "کسرونه"
-        },
-        {
-            de: "Dezimalzahlen",
-            en: "Decimals",
-            ps: "اعشاري شمېرې"
-        },
-        {
-            de: "Größen und Einheiten",
-            en: "Quantities and Units",
-            ps: "اندازې او واحدونه"
-        },
-        {
-            de: "Geometrische Figuren",
-            en: "Geometric Shapes",
-            ps: "هندسي شکلونه"
-        },
-        {
-            de: "Umfang",
-            en: "Perimeter",
-            ps: "محیط"
-        },
-        {
-            de: "Flächen",
-            en: "Areas",
-            ps: "مساحتونه"
-        },
-        {
-            de: "Koordinatensystem",
-            en: "Coordinate System",
-            ps: "مختصاتي سیستم"
-        },
-        {
-            de: "Sachaufgaben",
-            en: "Word Problems",
-            ps: "لفظي مسئلې"
-        }
+        ["Natürliche Zahlen", "Natural numbers", "طبیعي شمېرې"],
+        ["Addition und Subtraktion", "Addition and subtraction", "جمع او تفریق"],
+        ["Multiplikation und Division", "Multiplication and division", "ضرب او تقسیم"],
+        ["Brüche", "Fractions", "کسرونه"],
+        ["Dezimalzahlen", "Decimals", "اعشاري شمېرې"],
+        ["Geometrie", "Geometry", "هندسه"],
+        ["Längen", "Lengths", "اوږدوالی"],
+        ["Flächen", "Areas", "مساحت"],
+        ["Körper", "Solids", "اجسام"],
+        ["Sachaufgaben", "Word problems", "لفظي مسئلې"]
     ],
 
     6: [
-        {
-            de: "Brüche und Bruchrechnen",
-            en: "Fractions and Fraction Arithmetic",
-            ps: "کسرونه او د کسرونو حساب"
-        },
-        {
-            de: "Dezimalzahlen",
-            en: "Decimals",
-            ps: "اعشاري شمېرې"
-        },
-        {
-            de: "Prozentrechnung",
-            en: "Percentages",
-            ps: "سلنه"
-        },
-        {
-            de: "Negative Zahlen",
-            en: "Negative Numbers",
-            ps: "منفي شمېرې"
-        },
-        {
-            de: "Terme",
-            en: "Expressions",
-            ps: "عبارتونه"
-        },
-        {
-            de: "Gleichungen",
-            en: "Equations",
-            ps: "معادلې"
-        },
-        {
-            de: "Geometrie",
-            en: "Geometry",
-            ps: "هندسه"
-        },
-        {
-            de: "Flächen",
-            en: "Areas",
-            ps: "مساحتونه"
-        },
-        {
-            de: "Winkel",
-            en: "Angles",
-            ps: "زاویې"
-        },
-        {
-            de: "Daten und Diagramme",
-            en: "Data and Charts",
-            ps: "معلومات او جدولونه"
-        }
+        ["Brüche rechnen", "Calculating with fractions", "له کسرونو سره حساب"],
+        ["Dezimalzahlen", "Decimals", "اعشاري شمېرې"],
+        ["Prozentrechnung", "Percentages", "سلنه"],
+        ["Dreiecke", "Triangles", "مثلثونه"],
+        ["Winkel", "Angles", "زاویې"],
+        ["Flächen", "Areas", "مساحت"],
+        ["Volumen", "Volume", "حجم"],
+        ["Diagramme", "Charts", "نمودارونه"],
+        ["Gleichungen", "Equations", "معادلې"],
+        ["Sachaufgaben", "Word problems", "لفظي مسئلې"]
     ],
 
     7: [
-        {
-            de: "Rationale Zahlen",
-            en: "Rational Numbers",
-            ps: "منطقي شمېرې"
-        },
-        {
-            de: "Terme und Variablen",
-            en: "Expressions and Variables",
-            ps: "عبارتونه او متغیرونه"
-        },
-        {
-            de: "Gleichungen",
-            en: "Equations",
-            ps: "معادلې"
-        },
-        {
-            de: "Prozentrechnung",
-            en: "Percentages",
-            ps: "سلنه"
-        },
-        {
-            de: "Proportionalität",
-            en: "Proportionality",
-            ps: "تناسب"
-        },
-        {
-            de: "Dreiecke",
-            en: "Triangles",
-            ps: "مثلثونه"
-        },
-        {
-            de: "Winkel",
-            en: "Angles",
-            ps: "زاویې"
-        },
-        {
-            de: "Flächen und Körper",
-            en: "Areas and Solids",
-            ps: "مساحتونه او اجسام"
-        },
-        {
-            de: "Zuordnungen",
-            en: "Mappings",
-            ps: "اړیکې"
-        },
-        {
-            de: "Statistik",
-            en: "Statistics",
-            ps: "احصایه"
-        }
+        ["Rationale Zahlen", "Rational numbers", "ناطقې شمېرې"],
+        ["Prozentrechnung", "Percentages", "سلنه"],
+        ["Zinsrechnung", "Interest calculation", "د سود حساب"],
+        ["Terme", "Expressions", "عبارتونه"],
+        ["Gleichungen", "Equations", "معادلې"],
+        ["Dreiecke", "Triangles", "مثلثونه"],
+        ["Winkel", "Angles", "زاویې"],
+        ["Proportionalität", "Proportionality", "تناسب"],
+        ["Statistik", "Statistics", "احصایه"],
+        ["Wahrscheinlichkeit", "Probability", "احتمال"]
     ],
 
     8: [
-        {
-            de: "Lineare Funktionen",
-            en: "Linear Functions",
-            ps: "خطی دندې"
-        },
-        {
-            de: "Lineare Gleichungen",
-            en: "Linear Equations",
-            ps: "خطی معادلې"
-        },
-        {
-            de: "Terme",
-            en: "Expressions",
-            ps: "عبارتونه"
-        },
-        {
-            de: "Potenzrechnung",
-            en: "Powers",
-            ps: "توانونه"
-        },
-        {
-            de: "Wurzeln",
-            en: "Roots",
-            ps: "جذرونه"
-        },
-        {
-            de: "Satz des Pythagoras",
-            en: "Pythagorean Theorem",
-            ps: "د فیثاغورس قضیه"
-        },
-        {
-            de: "Kreis",
-            en: "Circle",
-            ps: "دایره"
-        },
-        {
-            de: "Prismen",
-            en: "Prisms",
-            ps: "منشورونه"
-        },
-        {
-            de: "Wahrscheinlichkeit",
-            en: "Probability",
-            ps: "احتمال"
-        },
-        {
-            de: "Statistik",
-            en: "Statistics",
-            ps: "احصایه"
-        }
+        ["Lineare Funktionen", "Linear functions", "خطې دندې"],
+        ["Lineare Gleichungen", "Linear equations", "خطې معادلې"],
+        ["Terme", "Expressions", "عبارتونه"],
+        ["Potenzrechnung", "Powers", "توانونه"],
+        ["Wurzeln", "Roots", "ریښې"],
+        ["Pythagoras", "Pythagorean theorem", "فیثاغورث"],
+        ["Kreis", "Circle", "دایره"],
+        ["Prismen", "Prisms", "منشورونه"],
+        ["Statistik", "Statistics", "احصایه"],
+        ["Wahrscheinlichkeit", "Probability", "احتمال"]
     ],
 
     9: [
-        {
-            de: "Quadratische Funktionen",
-            en: "Quadratic Functions",
-            ps: "درجې دوهمې دندې"
-        },
-        {
-            de: "Quadratische Gleichungen",
-            en: "Quadratic Equations",
-            ps: "درجې دوهمې معادلې"
-        },
-        {
-            de: "Potenzen",
-            en: "Powers",
-            ps: "توانونه"
-        },
-        {
-            de: "Wurzeln",
-            en: "Roots",
-            ps: "جذرونه"
-        },
-        {
-            de: "Ähnlichkeit",
-            en: "Similarity",
-            ps: "ورته والی"
-        },
-        {
-            de: "Trigonometrie",
-            en: "Trigonometry",
-            ps: "مثلثاتي حساب"
-        },
-        {
-            de: "Körper",
-            en: "Solids",
-            ps: "اجسام"
-        },
-        {
-            de: "Stochastik",
-            en: "Probability and Statistics",
-            ps: "احتمال او احصایه"
-        },
-        {
-            de: "Funktionen",
-            en: "Functions",
-            ps: "دندې"
-        },
-        {
-            de: "Sachaufgaben",
-            en: "Word Problems",
-            ps: "لفظي مسئلې"
-        }
+        ["Quadratische Funktionen", "Quadratic functions", "دوهم‌درجه دندې"],
+        ["Quadratische Gleichungen", "Quadratic equations", "دوهم‌درجه معادلې"],
+        ["Potenzen", "Powers", "توانونه"],
+        ["Wurzeln", "Roots", "ریښې"],
+        ["Exponentialfunktionen", "Exponential functions", "تواني دندې"],
+        ["Trigonometrie", "Trigonometry", "مثلثاتي ریاضي"],
+        ["Kreis und Zylinder", "Circle and cylinder", "دایره او استوانه"],
+        ["Ähnlichkeit", "Similarity", "ورته والی"],
+        ["Statistik", "Statistics", "احصایه"],
+        ["Wahrscheinlichkeit", "Probability", "احتمال"]
     ],
 
     10: [
-        {
-            de: "Quadratische Funktionen",
-            en: "Quadratic Functions",
-            ps: "درجې دوهمې دندې"
-        },
-        {
-            de: "Quadratische Gleichungen",
-            en: "Quadratic Equations",
-            ps: "درجې دوهمې معادلې"
-        },
-        {
-            de: "Exponentialfunktionen",
-            en: "Exponential Functions",
-            ps: "تواني دندې"
-        },
-        {
-            de: "Logarithmen",
-            en: "Logarithms",
-            ps: "لوګاریتمونه"
-        },
-        {
-            de: "Trigonometrie",
-            en: "Trigonometry",
-            ps: "مثلثاتي حساب"
-        },
-        {
-            de: "Analytische Geometrie",
-            en: "Analytic Geometry",
-            ps: "تحلیلي هندسه"
-        },
-        {
-            de: "Wahrscheinlichkeit",
-            en: "Probability",
-            ps: "احتمال"
-        },
-        {
-            de: "Statistik",
-            en: "Statistics",
-            ps: "احصایه"
-        },
-        {
-            de: "Funktionen",
-            en: "Functions",
-            ps: "دندې"
-        },
-        {
-            de: "Prüfungsvorbereitung",
-            en: "Exam Preparation",
-            ps: "د ازموینې چمتووالی"
-        }
+        ["Quadratische Funktionen", "Quadratic functions", "دوهم‌درجه دندې"],
+        ["Exponentialfunktionen", "Exponential functions", "تواني دندې"],
+        ["Logarithmen", "Logarithms", "لوګاریتمونه"],
+        ["Trigonometrie", "Trigonometry", "مثلثاتي ریاضي"],
+        ["Sinus und Kosinus", "Sine and cosine", "ساین او کوساین"],
+        ["Körperberechnung", "Solid geometry", "د اجسامو حساب"],
+        ["Analytische Geometrie", "Analytic geometry", "تحلیلي هندسه"],
+        ["Statistik", "Statistics", "احصایه"],
+        ["Wahrscheinlichkeit", "Probability", "احتمال"],
+        ["Finanzmathematik", "Financial mathematics", "مالي ریاضي"]
     ],
 
     11: [
-        {
-            de: "Analysis",
-            en: "Calculus",
-            ps: "تحلیل"
-        },
-        {
-            de: "Funktionen",
-            en: "Functions",
-            ps: "دندې"
-        },
-        {
-            de: "Differentialrechnung",
-            en: "Differentiation",
-            ps: "تفاضلي حساب"
-        },
-        {
-            de: "Integralrechnung",
-            en: "Integration",
-            ps: "انتګرال حساب"
-        },
-        {
-            de: "Exponentialfunktionen",
-            en: "Exponential Functions",
-            ps: "تواني دندې"
-        },
-        {
-            de: "Analytische Geometrie",
-            en: "Analytic Geometry",
-            ps: "تحلیلي هندسه"
-        },
-        {
-            de: "Vektoren",
-            en: "Vectors",
-            ps: "وکتورونه"
-        },
-        {
-            de: "Stochastik",
-            en: "Probability and Statistics",
-            ps: "احتمال او احصایه"
-        },
-        {
-            de: "Wahrscheinlichkeitsrechnung",
-            en: "Probability Theory",
-            ps: "د احتمال حساب"
-        },
-        {
-            de: "Statistik",
-            en: "Statistics",
-            ps: "احصایه"
-        }
+        ["Funktionen", "Functions", "دندې"],
+        ["Grenzwerte", "Limits", "حدونه"],
+        ["Differentialrechnung", "Differentiation", "تفاضلي حساب"],
+        ["Ableitungen", "Derivatives", "مشتقات"],
+        ["Kurvendiskussion", "Curve analysis", "د منحني تحلیل"],
+        ["Integralrechnung", "Integration", "انتګرال"],
+        ["Vektoren", "Vectors", "ویکتورونه"],
+        ["Geraden", "Lines", "کرښې"],
+        ["Stochastik", "Stochastics", "احتمالات"],
+        ["Statistik", "Statistics", "احصایه"]
     ],
 
     12: [
-        {
-            de: "Analysis",
-            en: "Calculus",
-            ps: "تحلیل"
-        },
-        {
-            de: "Differentialrechnung",
-            en: "Differentiation",
-            ps: "تفاضلي حساب"
-        },
-        {
-            de: "Integralrechnung",
-            en: "Integration",
-            ps: "انتګرال حساب"
-        },
-        {
-            de: "Exponential- und Logarithmusfunktionen",
-            en: "Exponential and Logarithmic Functions",
-            ps: "تواني او لوګاریتمي دندې"
-        },
-        {
-            de: "Vektorrechnung",
-            en: "Vector Calculus",
-            ps: "د وکتورونو حساب"
-        },
-        {
-            de: "Geraden und Ebenen",
-            en: "Lines and Planes",
-            ps: "مستقیمې کرښې او سطحې"
-        },
-        {
-            de: "Abstände und Winkel",
-            en: "Distances and Angles",
-            ps: "واټنونه او زاویې"
-        },
-        {
-            de: "Stochastik",
-            en: "Probability and Statistics",
-            ps: "احتمال او احصایه"
-        },
-        {
-            de: "Binomialverteilung",
-            en: "Binomial Distribution",
-            ps: "بینومي ویش"
-        },
-        {
-            de: "Normalverteilung",
-            en: "Normal Distribution",
-            ps: "نورمال ویش"
-        }
+        ["Differentialrechnung", "Differentiation", "تفاضلي حساب"],
+        ["Integralrechnung", "Integration", "انتګرال"],
+        ["Exponentialfunktionen", "Exponential functions", "تواني دندې"],
+        ["Logarithmusfunktionen", "Logarithmic functions", "لوګاریتمي دندې"],
+        ["Kurvendiskussion", "Curve analysis", "د منحني تحلیل"],
+        ["Vektorrechnung", "Vector calculus", "ویکتوري حساب"],
+        ["Geraden und Ebenen", "Lines and planes", "کرښې او سطحې"],
+        ["Abstände und Winkel", "Distances and angles", "واټنونه او زاویې"],
+        ["Binomialverteilung", "Binomial distribution", "بینومي وېش"],
+        ["Normalverteilung", "Normal distribution", "نورمال وېش"]
     ],
 
     13: [
-        {
-            de: "Analysis – Funktionen und Kurvendiskussion",
-            en: "Calculus – Functions and Curve Analysis",
-            ps: "تحلیل – دندې او د منحني تحلیل"
-        },
-        {
-            de: "Differentialrechnung",
-            en: "Differentiation",
-            ps: "تفاضلي حساب"
-        },
-        {
-            de: "Integralrechnung",
-            en: "Integration",
-            ps: "انتګرال حساب"
-        },
-        {
-            de: "Exponential- und Logarithmusfunktionen",
-            en: "Exponential and Logarithmic Functions",
-            ps: "تواني او لوګاریتمي دندې"
-        },
-        {
-            de: "Analytische Geometrie – Vektoren",
-            en: "Analytic Geometry – Vectors",
-            ps: "تحلیلي هندسه – وکتورونه"
-        },
-        {
-            de: "Geraden und Ebenen",
-            en: "Lines and Planes",
-            ps: "مستقیمې کرښې او سطحې"
-        },
-        {
-            de: "Abstände und Winkel im Raum",
-            en: "Distances and Angles in Space",
-            ps: "په فضا کې واټنونه او زاویې"
-        },
-        {
-            de: "Stochastik – Wahrscheinlichkeitsrechnung",
-            en: "Probability Theory",
-            ps: "احتمال حساب"
-        },
-        {
-            de: "Binomialverteilung und Normalverteilung",
-            en: "Binomial and Normal Distribution",
-            ps: "بینومي او نورمال ویش"
-        },
-        {
-            de: "Statistik und Hypothesentests",
-            en: "Statistics and Hypothesis Tests",
-            ps: "احصایه او د فرضیې ازموینې"
-        }
+        ["Analysis", "Calculus", "تحلیل"],
+        ["Differentialrechnung", "Differentiation", "تفاضلي حساب"],
+        ["Integralrechnung", "Integration", "انتګرال"],
+        ["Exponential- und Logarithmusfunktionen", "Exponential and logarithmic functions", "تواني او لوګاریتمي دندې"],
+        ["Analytische Geometrie", "Analytic geometry", "تحلیلي هندسه"],
+        ["Vektoren", "Vectors", "ویکتورونه"],
+        ["Geraden und Ebenen", "Lines and planes", "کرښې او سطحې"],
+        ["Stochastik", "Stochastics", "احتمالات"],
+        ["Binomial- und Normalverteilung", "Binomial and normal distribution", "بینومي او نورمال وېش"],
+        ["Abiturprüfung", "Abitur examination", "د ابیتور ازموینه"]
     ]
 
 };
 
+// ------------------------------------------------------------
+// FRAGEN
+// ------------------------------------------------------------
+// Beispiel-Fragen für jedes Thema.
+// Das System erzeugt zusätzlich weitere Aufgaben automatisch.
+// ------------------------------------------------------------
 
-// ============================================================
-// FRAGEN KLASSE 5
-// ============================================================
+const fragen = {
 
-const fragenKlasse5 = {
+    // ---------------- KLASSE 5 ----------------
 
-    0: [
+    "5-0": [
+
         {
-            frage: {
-                de: "Welche Zahl kommt nach 99?",
-                en: "Which number comes after 99?",
-                ps: "له ۹۹ څخه وروسته کومه شمېره راځي؟"
+            de: "Welche Zahl ist größer?",
+            en: "Which number is larger?",
+            ps: "کومه شمېره لویه ده؟",
+
+            optionen: {
+                de: ["15", "9", "12", "7"],
+                en: ["15", "9", "12", "7"],
+                ps: ["۱۵", "۹", "۱۲", "۷"]
             },
-            antworten: [
-                { de: "100", en: "100", ps: "۱۰۰" },
-                { de: "98", en: "98", ps: "۹۸" },
-                { de: "101", en: "101", ps: "۱۰۱" },
-                { de: "90", en: "90", ps: "۹۰" }
-            ],
+
             richtig: 0,
+
+            erklaerung: {
+                de: "15 ist größer als 9, 12 und 7.",
+                en: "15 is larger than 9, 12 and 7.",
+                ps: "۱۵ له ۹، ۱۲ او ۷ څخه لوی دی."
+            }
+        },
+
+        {
+            de: "Welche Zahl kommt nach 99?",
+            en: "Which number comes after 99?",
+            ps: "له ۹۹ وروسته کومه شمېره راځي؟",
+
+            optionen: {
+                de: ["98", "100", "101", "90"],
+                en: ["98", "100", "101", "90"],
+                ps: ["۹۸", "۱۰۰", "۱۰۱", "۹۰"]
+            },
+
+            richtig: 1,
+
             erklaerung: {
                 de: "Nach 99 kommt 100.",
                 en: "100 comes after 99.",
-                ps: "له ۹۹ څخه وروسته ۱۰۰ راځي."
-            }
-        },
-
-        {
-            frage: {
-                de: "Welche Zahl ist größer: 45 oder 54?",
-                en: "Which number is greater: 45 or 54?",
-                ps: "کومه شمېره لویه ده: ۴۵ که ۵۴؟"
-            },
-            antworten: [
-                { de: "45", en: "45", ps: "۴۵" },
-                { de: "54", en: "54", ps: "۵۴" },
-                { de: "40", en: "40", ps: "۴۰" },
-                { de: "35", en: "35", ps: "۳۵" }
-            ],
-            richtig: 1,
-            erklaerung: {
-                de: "54 ist größer als 45.",
-                en: "54 is greater than 45.",
-                ps: "۵۴ له ۴۵ څخه لوی دی."
-            }
-        },
-
-        {
-            frage: {
-                de: "Welche Zahl ist kleiner als 30?",
-                en: "Which number is smaller than 30?",
-                ps: "کومه شمېره له ۳۰ څخه کوچنۍ ده؟"
-            },
-            antworten: [
-                { de: "35", en: "35", ps: "۳۵" },
-                { de: "42", en: "42", ps: "۴۲" },
-                { de: "27", en: "27", ps: "۲۷" },
-                { de: "31", en: "31", ps: "۳۱" }
-            ],
-            richtig: 2,
-            erklaerung: {
-                de: "27 ist kleiner als 30.",
-                en: "27 is smaller than 30.",
-                ps: "۲۷ له ۳۰ څخه کوچنی دی."
+                ps: "له ۹۹ وروسته ۱۰۰ راځي."
             }
         }
+
     ],
 
-    1: [
-        {
-            frage: {
-                de: "Wie viel ist 7 + 5?",
-                en: "What is 7 + 5?",
-                ps: "۷ + ۵ څو کېږي؟"
-            },
-            antworten: [
-                { de: "10", en: "10", ps: "۱۰" },
-                { de: "12", en: "12", ps: "۱۲" },
-                { de: "13", en: "13", ps: "۱۳" },
-                { de: "14", en: "14", ps: "۱۴" }
-            ],
-            richtig: 1,
-            erklaerung: {
-                de: "7 + 5 = 12.",
-                en: "7 + 5 = 12.",
-                ps: "۷ + ۵ = ۱۲."
-            }
-        },
+    // ---------------- KLASSE 6 ----------------
+
+    "6-0": [
 
         {
-            frage: {
-                de: "Wie viel ist 15 - 7?",
-                en: "What is 15 - 7?",
-                ps: "۱۵ - ۷ څو کېږي؟"
+            de: "Wie viel ist 1/2 + 1/2?",
+            en: "What is 1/2 + 1/2?",
+            ps: "۱/۲ + ۱/۲ څو کېږي؟",
+
+            optionen: {
+                de: ["1", "2", "1/4", "3/2"],
+                en: ["1", "2", "1/4", "3/2"],
+                ps: ["۱", "۲", "۱/۴", "۳/۲"]
             },
-            antworten: [
-                { de: "6", en: "6", ps: "۶" },
-                { de: "7", en: "7", ps: "۷" },
-                { de: "8", en: "8", ps: "۸" },
-                { de: "9", en: "9", ps: "۹" }
-            ],
-            richtig: 2,
-            erklaerung: {
-                de: "15 - 7 = 8.",
-                en: "15 - 7 = 8.",
-                ps: "۱۵ - ۷ = ۸."
-            }
-        }
-    ],
-
-    2: [],
-    3: [],
-    4: [],
-    5: [],
-    6: [],
-    7: [],
-    8: [],
-    9: []
-};
-
-
-// ============================================================
-// FRAGEN FÜR ANDERE KLASSEN
-// ============================================================
-// Damit die App nicht abstürzt, bekommt jedes Thema
-// zunächst eine Beispiel-Frage.
-// Später können hier die echten 30 Fragen pro Thema stehen.
-
-
-function erstelleStandardFragen(klasse, thema) {
-
-    const themaName = themen[klasse][thema];
-
-    return [
-        {
-            frage: {
-                de: `Frage zu ${themaName.de}`,
-                en: `Question about ${themaName.en}`,
-                ps: `د ${themaName.ps} په اړه پوښتنه`
-            },
-
-            antworten: [
-                {
-                    de: "Antwort A",
-                    en: "Answer A",
-                    ps: "ځواب A"
-                },
-                {
-                    de: "Antwort B",
-                    en: "Answer B",
-                    ps: "ځواب B"
-                },
-                {
-                    de: "Antwort C",
-                    en: "Answer C",
-                    ps: "ځواب C"
-                },
-                {
-                    de: "Antwort D",
-                    en: "Answer D",
-                    ps: "ځواب D"
-                }
-            ],
 
             richtig: 0,
 
             erklaerung: {
-                de: "Dies ist eine Beispielerklärung.",
-                en: "This is an example explanation.",
-                ps: "دا یوه بېلګه تشریح ده."
+                de: "Ein halbes + ein halbes ergibt ein Ganzes.",
+                en: "One half plus one half equals one whole.",
+                ps: "نیم + نیم = یو بشپړ."
             }
         }
-    ];
-}
 
+    ],
 
-// ============================================================
-// FRAGEN HOLEN
-// ============================================================
+    // ---------------- KLASSE 7 ----------------
 
-function holeFragen() {
+    "7-0": [
 
-    if (gewaehlteKlasse === 5) {
+        {
+            de: "Welche Zahl ist eine rationale Zahl?",
+            en: "Which number is a rational number?",
+            ps: "کومه شمېره ناطقه شمېره ده؟",
 
-        if (fragenKlasse5[aktuellesThema]) {
-            return fragenKlasse5[aktuellesThema];
+            optionen: {
+                de: ["1/2", "√2", "π", "√3"],
+                en: ["1/2", "√2", "π", "√3"],
+                ps: ["۱/۲", "√۲", "π", "√۳"]
+            },
+
+            richtig: 0,
+
+            erklaerung: {
+                de: "1/2 kann als Bruch zweier ganzer Zahlen geschrieben werden.",
+                en: "1/2 can be written as a fraction of two integers.",
+                ps: "۱/۲ د دوو صحیح عددونو د کسر په توګه لیکل کېدای شي."
+            }
         }
+
+    ],
+
+    // ---------------- KLASSE 8 ----------------
+
+    "8-0": [
+
+        {
+            de: "Welche Gleichung beschreibt eine lineare Funktion?",
+            en: "Which equation describes a linear function?",
+            ps: "کومه معادله خطي دنده ښيي؟",
+
+            optionen: {
+                de: ["y = 2x + 3", "y = x²", "y = 1/x", "y = x³"],
+                en: ["y = 2x + 3", "y = x²", "y = 1/x", "y = x³"],
+                ps: ["y = 2x + 3", "y = x²", "y = 1/x", "y = x³"]
+            },
+
+            richtig: 0,
+
+            erklaerung: {
+                de: "Eine lineare Funktion hat die Form y = mx + b.",
+                en: "A linear function has the form y = mx + b.",
+                ps: "خطي دنده د y = mx + b بڼه لري."
+            }
+        }
+
+    ],
+
+    // ---------------- KLASSE 9 ----------------
+
+    "9-0": [
+
+        {
+            de: "Was ist die Lösung von x² = 25?",
+            en: "What is the solution of x² = 25?",
+            ps: "د x² = 25 حل څه دی؟",
+
+            optionen: {
+                de: ["5 und -5", "5", "-5", "25"],
+                en: ["5 and -5", "5", "-5", "25"],
+                ps: ["۵ او -۵", "۵", "-۵", "۲۵"]
+            },
+
+            richtig: 0,
+
+            erklaerung: {
+                de: "5² = 25 und (-5)² = 25. Deshalb gibt es zwei Lösungen.",
+                en: "5² = 25 and (-5)² = 25. Therefore there are two solutions.",
+                ps: "۵² = ۲۵ او (-۵)² = ۲۵ دی، نو دوه حلونه شته."
+            }
+        }
+
+    ],
+
+    // ---------------- KLASSE 10 ----------------
+
+    "10-0": [
+
+        {
+            de: "Was ist die Ableitung von f(x) = x²?",
+            en: "What is the derivative of f(x) = x²?",
+            ps: "د f(x) = x² مشتق څه دی؟",
+
+            optionen: {
+                de: ["2x", "x", "x²", "2"],
+                en: ["2x", "x", "x²", "2"],
+                ps: ["2x", "x", "x²", "2"]
+            },
+
+            richtig: 0,
+
+            erklaerung: {
+                de: "Nach der Potenzregel ist die Ableitung von x² gleich 2x.",
+                en: "Using the power rule, the derivative of x² is 2x.",
+                ps: "د توان د قانون له مخې د x² مشتق 2x دی."
+            }
+        }
+
+    ],
+
+    // ---------------- KLASSE 11 ----------------
+
+    "11-0": [
+
+        {
+            de: "Was ist die Ableitung von f(x) = 3x²?",
+            en: "What is the derivative of f(x) = 3x²?",
+            ps: "د f(x) = 3x² مشتق څه دی؟",
+
+            optionen: {
+                de: ["6x", "3x", "6", "x²"],
+                en: ["6x", "3x", "6", "x²"],
+                ps: ["6x", "3x", "6", "x²"]
+            },
+
+            richtig: 0,
+
+            erklaerung: {
+                de: "Die Ableitung von 3x² ist 3 · 2x = 6x.",
+                en: "The derivative of 3x² is 3 · 2x = 6x.",
+                ps: "د 3x² مشتق 3 · 2x = 6x دی."
+            }
+        }
+
+    ],
+
+    // ---------------- KLASSE 12 ----------------
+
+    "12-0": [
+
+        {
+            de: "Was ist das Integral von 2x?",
+            en: "What is the integral of 2x?",
+            ps: "د 2x انتګرال څه دی؟",
+
+            optionen: {
+                de: ["x² + C", "2x² + C", "x + C", "2 + C"],
+                en: ["x² + C", "2x² + C", "x + C", "2 + C"],
+                ps: ["x² + C", "2x² + C", "x + C", "2 + C"]
+            },
+
+            richtig: 0,
+
+            erklaerung: {
+                de: "Die Stammfunktion von 2x ist x² + C.",
+                en: "The antiderivative of 2x is x² + C.",
+                ps: "د 2x ابتدایي دنده x² + C ده."
+            }
+        }
+
+    ],
+
+    // ---------------- ABITUR ----------------
+
+    "13-0": [
+
+        {
+            de: "Welche Ableitung hat f(x) = eˣ?",
+            en: "What is the derivative of f(x) = eˣ?",
+            ps: "د f(x) = eˣ مشتق څه دی؟",
+
+            optionen: {
+                de: ["eˣ", "x·eˣ", "1", "0"],
+                en: ["eˣ", "x·eˣ", "1", "0"],
+                ps: ["eˣ", "x·eˣ", "۱", "۰"]
+            },
+
+            richtig: 0,
+
+            erklaerung: {
+                de: "Die Exponentialfunktion eˣ ist ihre eigene Ableitung.",
+                en: "The exponential function eˣ is its own derivative.",
+                ps: "د eˣ دندې مشتق خپله eˣ دی."
+            }
+        }
+
+    ]
+
+};
+
+// ------------------------------------------------------------
+// AUTOMATISCHE FRAGEN FÜR NOCH NICHT BEFÜLLTE THEMEN
+// ------------------------------------------------------------
+
+function erstelleStandardFragen(klasse, thema) {
+
+    const liste = [];
+
+    for (let i = 1; i <= 30; i++) {
+
+        const zahlen = [
+            i,
+            i + 2,
+            i + 5,
+            i + 10
+        ];
+
+        const richtig = i % 4;
+
+        let frageDe = "";
+        let frageEn = "";
+        let fragePs = "";
+
+        if (thema.toLowerCase().includes("prozent")) {
+
+            frageDe = `Wie viel sind ${i} % von 100?`;
+            frageEn = `What is ${i}% of 100?`;
+            fragePs = `د ۱۰۰ څخه ${i}% څو کېږي؟`;
+
+        } else if (thema.toLowerCase().includes("ableitung")) {
+
+            frageDe = `Was ist die Ableitung von f(x) = ${i}x?`;
+            frageEn = `What is the derivative of f(x) = ${i}x?`;
+            fragePs = `د f(x) = ${i}x مشتق څه دی؟`;
+
+        } else if (thema.toLowerCase().includes("integral")) {
+
+            frageDe = `Was ist eine Stammfunktion von ${i}x?`;
+            frageEn = `What is an antiderivative of ${i}x?`;
+            fragePs = `د ${i}x ابتدایي دنده څه ده؟`;
+
+        } else if (thema.toLowerCase().includes("wahrscheinlichkeit")) {
+
+            frageDe = `Eine Münze wird einmal geworfen. Wie groß ist die Wahrscheinlichkeit für Kopf?`;
+            frageEn = `A coin is tossed once. What is the probability of heads?`;
+            fragePs = `یوه سکه یو ځل غورځول کېږي. د سر احتمال څومره دی؟`;
+
+        } else {
+
+            frageDe = `Welche Zahl ist die richtige Lösung für Aufgabe ${i}?`;
+            frageEn = `Which number is the correct answer for question ${i}?`;
+            fragePs = `د ${i} پوښتنې سم ځواب کومه شمېره ده؟`;
+
+        }
+
+        let optionenDe = zahlen.map(x => String(x));
+        let optionenEn = zahlen.map(x => String(x));
+        let optionenPs = zahlen.map(x => String(x));
+
+        liste.push({
+
+            de: frageDe,
+            en: frageEn,
+            ps: fragePs,
+
+            optionen: {
+                de: optionenDe,
+                en: optionenEn,
+                ps: optionenPs
+            },
+
+            richtig: richtig,
+
+            erklaerung: {
+                de: `Die richtige Antwort ist ${zahlen[richtig]}.`,
+                en: `The correct answer is ${zahlen[richtig]}.`,
+                ps: `سم ځواب ${zahlen[richtig]} دی.`
+            }
+
+        });
+
     }
 
+    return liste;
+}
+
+// ------------------------------------------------------------
+// ALLE FRAGEN VORBEREITEN
+// ------------------------------------------------------------
+
+function holeFragen(klasse, themaIndex) {
+
+    const key = `${klasse}-${themaIndex}`;
+
+    if (fragen[key] && fragen[key].length > 0) {
+        return fragen[key];
+    }
+
+    const thema = themenListe[klasse][themaIndex];
+
     return erstelleStandardFragen(
-        gewaehlteKlasse,
-        aktuellesThema
+        klasse,
+        thema[0]
     );
 }
 
+// ------------------------------------------------------------
+// APP STATUS
+// ------------------------------------------------------------
 
-// ============================================================
-// START → SPRACHEN
-// ============================================================
+let aktuelleKlasse = null;
+let aktuellesThema = null;
+let aktuelleFragen = [];
+let aktuelleFrage = 0;
+let punktzahl = 0;
+let antwortGeprueft = false;
+
+// ------------------------------------------------------------
+// HTML ELEMENTE
+// ------------------------------------------------------------
+
+function el(id) {
+    return document.getElementById(id);
+}
+
+// ------------------------------------------------------------
+// STARTSEITE
+// ------------------------------------------------------------
+
+function zeigeStartseite() {
+
+    versteckeAlles();
+
+    if (el("startseite")) {
+        el("startseite").classList.remove("versteckt");
+    }
+
+}
+
+// ------------------------------------------------------------
+// SPRACHWAHL
+// ------------------------------------------------------------
 
 function zeigeSprachen() {
 
-    document
-        .getElementById("startseite")
-        .classList.add("versteckt");
+    versteckeAlles();
 
-    document
-        .getElementById("sprachen")
-        .classList.remove("versteckt");
+    if (el("sprachen")) {
+        el("sprachen").classList.remove("versteckt");
+    }
+
 }
 
-
-// ============================================================
+// ------------------------------------------------------------
 // SPRACHE AUSWÄHLEN
-// ============================================================
+// ------------------------------------------------------------
 
 function spracheAuswaehlen(sprache) {
 
     aktuelleSprache = sprache;
 
-    document
-        .getElementById("sprachen")
-        .classList.add("versteckt");
+    localStorage.setItem(
+        "mathelernwelt_sprache",
+        sprache
+    );
 
-    document
-        .getElementById("anmeldung")
-        .classList.remove("versteckt");
+    zeigeAnmeldung();
 
-
-    if (sprache === "de") {
-
-        document.getElementById("loginTitel").textContent =
-            "Anmelden";
-
-        document.getElementById("email").placeholder =
-            "E-Mail";
-
-        document.getElementById("passwort").placeholder =
-            "Passwort";
-
-        document.getElementById("loginButton").textContent =
-            "Einloggen";
-
-        document.getElementById("registerText").textContent =
-            "Noch kein Konto?";
-
-        document.getElementById("registerButton").textContent =
-            "Registrieren";
-    }
-
-
-    if (sprache === "en") {
-
-        document.getElementById("loginTitel").textContent =
-            "Login";
-
-        document.getElementById("email").placeholder =
-            "Email";
-
-        document.getElementById("passwort").placeholder =
-            "Password";
-
-        document.getElementById("loginButton").textContent =
-            "Sign in";
-
-        document.getElementById("registerText").textContent =
-            "Don't have an account?";
-
-        document.getElementById("registerButton").textContent =
-            "Register";
-    }
-
-
-    if (sprache === "ps") {
-
-        document.getElementById("loginTitel").textContent =
-            "ننوتل";
-
-        document.getElementById("email").placeholder =
-            "برېښنالیک";
-
-        document.getElementById("passwort").placeholder =
-            "پټ نوم";
-
-        document.getElementById("loginButton").textContent =
-            "ننوتل";
-
-        document.getElementById("registerText").textContent =
-            "حساب نه لرئ؟";
-
-        document.getElementById("registerButton").textContent =
-            "حساب جوړ کړئ";
-    }
 }
 
+// ------------------------------------------------------------
+// ANMELDUNG
+// ------------------------------------------------------------
 
-// ============================================================
+function zeigeAnmeldung() {
+
+    versteckeAlles();
+
+    if (el("anmeldung")) {
+
+        el("anmeldung").classList.remove("versteckt");
+
+    }
+
+    setText("anmeldeTitel", t("anmelden"));
+    setText("registrierTitel", t("registrieren"));
+
+    setPlaceholder(
+        "email",
+        t("email")
+    );
+
+    setPlaceholder(
+        "passwort",
+        t("passwort")
+    );
+
+}
+
+// ------------------------------------------------------------
 // REGISTRIEREN
-// ============================================================
+// ------------------------------------------------------------
 
 async function registrieren() {
 
-    const email =
-        document.getElementById("email").value.trim();
-
-    const passwort =
-        document.getElementById("passwort").value;
-
-    const meldung =
-        document.getElementById("meldung");
-
+    const email = el("email")?.value.trim();
+    const passwort = el("passwort")?.value;
 
     if (!email || !passwort) {
 
-        meldung.textContent =
-            aktuelleSprache === "en"
-                ? "Please enter email and password."
-                : aktuelleSprache === "ps"
-                    ? "مهرباني وکړئ برېښنالیک او پټ نوم ولیکئ."
-                    : "Bitte E-Mail und Passwort eingeben.";
+        alert(
+            aktuelleSprache === "de"
+                ? "Bitte E-Mail und Passwort eingeben."
+                : aktuelleSprache === "en"
+                    ? "Please enter email and password."
+                    : "مهرباني وکړئ ایمیل او پټ نوم ولیکئ."
+        );
 
         return;
     }
 
+    if (!supabaseClient) {
 
-    const { error } =
-        await supabaseClient.auth.signUp({
-            email: email,
-            password: passwort
-        });
-
-
-    if (error) {
-
-        meldung.textContent = error.message;
+        alert(
+            "Bitte zuerst SUPABASE_URL und SUPABASE_KEY in App.js eintragen."
+        );
 
         return;
     }
 
+    try {
 
-    meldung.textContent =
-        aktuelleSprache === "en"
-            ? "Account created successfully!"
-            : aktuelleSprache === "ps"
-                ? "ستاسو حساب په بریالیتوب سره جوړ شو!"
-                : "Konto wurde erfolgreich erstellt!";
+        const { data, error } =
+            await supabaseClient.auth.signUp({
+
+                email: email,
+                password: passwort
+
+            });
+
+        if (error) {
+
+            alert(error.message);
+            return;
+
+        }
+
+        alert(
+            aktuelleSprache === "de"
+                ? "Konto wurde erstellt!"
+                : aktuelleSprache === "en"
+                    ? "Account created!"
+                    : "حساب جوړ شو!"
+        );
+
+        if (data.session) {
+
+            zeigeKlassen();
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+
 }
 
-
-// ============================================================
-// ANMELDEN
-// ============================================================
+// ------------------------------------------------------------
+// LOGIN
+// ------------------------------------------------------------
 
 async function anmelden() {
 
-    const email =
-        document.getElementById("email").value.trim();
-
-    const passwort =
-        document.getElementById("passwort").value;
-
-    const meldung =
-        document.getElementById("meldung");
-
+    const email = el("email")?.value.trim();
+    const passwort = el("passwort")?.value;
 
     if (!email || !passwort) {
 
-        meldung.textContent =
-            aktuelleSprache === "en"
-                ? "Please enter email and password."
-                : aktuelleSprache === "ps"
-                    ? "مهرباني وکړئ برېښنالیک او پټ نوم ولیکئ."
-                    : "Bitte E-Mail und Passwort eingeben.";
+        alert(
+            aktuelleSprache === "de"
+                ? "Bitte E-Mail und Passwort eingeben."
+                : aktuelleSprache === "en"
+                    ? "Please enter email and password."
+                    : "مهرباني وکړئ ایمیل او پټ نوم ولیکئ."
+        );
 
         return;
     }
 
+    if (!supabaseClient) {
 
-    const { error } =
-        await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: passwort
-        });
-
-
-    if (error) {
-
-        meldung.textContent = error.message;
+        alert(
+            "Bitte zuerst SUPABASE_URL und SUPABASE_KEY in App.js eintragen."
+        );
 
         return;
     }
 
+    try {
 
-    document
-        .getElementById("anmeldung")
-        .classList.add("versteckt");
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
 
-    document
-        .getElementById("klassen")
-        .classList.remove("versteckt");
+                email: email,
+                password: passwort
 
+            });
 
-    aktualisiereKlassenSprache();
-}
+        if (error) {
 
+            alert(error.message);
+            return;
 
-// ============================================================
-// KLASSEN-SPRACHE
-// ============================================================
-
-function aktualisiereKlassenSprache() {
-
-    document.getElementById("klassenTitel").textContent =
-        aktuelleSprache === "de"
-            ? "Wähle deine Klasse"
-            : aktuelleSprache === "en"
-                ? "Choose your class"
-                : "خپل ټولګی وټاکئ";
-
-
-    document.getElementById("klassenText").textContent =
-        aktuelleSprache === "de"
-            ? "Wähle eine Klasse aus:"
-            : aktuelleSprache === "en"
-                ? "Select a class:"
-                : "یو ټولګی وټاکئ";
-
-
-    const buttons =
-        document.querySelectorAll("#klassen .klassenListe button");
-
-
-    buttons.forEach((button, index) => {
-
-        const klasse = index + 5;
-
-        if (klassen[klasse]) {
-            button.textContent =
-                klassen[klasse][aktuelleSprache];
         }
-    });
+
+        if (data.session) {
+
+            alert(
+                aktuelleSprache === "de"
+                    ? "Erfolgreich angemeldet!"
+                    : aktuelleSprache === "en"
+                        ? "Successfully logged in!"
+                        : "په بریالیتوب سره ننوتل!"
+            );
+
+            zeigeKlassen();
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(error.message);
+
+    }
+
 }
 
+// ------------------------------------------------------------
+// KLASSEN ANZEIGEN
+// ------------------------------------------------------------
 
-// ============================================================
-// KLASSE AUSWÄHLEN
-// ============================================================
+function zeigeKlassen() {
 
-function klasseAuswaehlen(klasse) {
+    versteckeAlles();
 
-    gewaehlteKlasse = klasse;
-    aktuellesThema = 0;
-    aktuelleFrage = 0;
+    const container = el("klassen");
 
+    if (!container) {
 
-    document
-        .getElementById("klassen")
-        .classList.add("versteckt");
+        console.warn(
+            "Das Element #klassen wurde nicht gefunden."
+        );
 
-    document
-        .getElementById("themen")
-        .classList.remove("versteckt");
+        return;
 
+    }
 
-    zeigeThemen();
-}
+    container.classList.remove("versteckt");
 
+    container.innerHTML = "";
 
-// ============================================================
-// THEMEN ANZEIGEN
-// ============================================================
+    const titel = document.createElement("h2");
 
-function zeigeThemen() {
+    titel.textContent = t("klasseWaehlen");
 
-    const titel =
-        document.getElementById("themenTitel");
+    container.appendChild(titel);
 
-    const liste =
-        document.getElementById("themenListe");
+    const grid = document.createElement("div");
 
+    grid.className = "klassen-grid";
 
-    titel.textContent =
-        aktuelleSprache === "de"
-            ? "Wähle ein Thema"
-            : aktuelleSprache === "en"
-                ? "Choose a topic"
-                : "یوه موضوع وټاکئ";
-
-
-    liste.innerHTML = "";
-
-
-    const klassenThemen =
-        themen[gewaehlteKlasse] || [];
-
-
-    klassenThemen.forEach((thema, index) => {
+    klassen.forEach(klasse => {
 
         const button =
             document.createElement("button");
 
+        button.className = "klasse-button";
 
         button.textContent =
-            `${index + 1}. ${thema[aktuelleSprache]}`;
+            klasse[aktuelleSprache];
 
+        button.onclick = () =>
+            waehleKlasse(klasse.id);
 
-        button.onclick = function () {
+        grid.appendChild(button);
 
-            themaAuswaehlen(index);
+    });
 
-        };
+    container.appendChild(grid);
 
+}
+
+// ------------------------------------------------------------
+// KLASSE AUSWÄHLEN
+// ------------------------------------------------------------
+
+function waehleKlasse(klasse) {
+
+    aktuelleKlasse = klasse;
+
+    zeigeThemen();
+
+}
+
+// ------------------------------------------------------------
+// THEMEN ANZEIGEN
+// ------------------------------------------------------------
+
+function zeigeThemen() {
+
+    versteckeAlles();
+
+    const container = el("themen");
+
+    if (!container) return;
+
+    container.classList.remove("versteckt");
+
+    container.innerHTML = "";
+
+    const titel =
+        document.createElement("h2");
+
+    titel.textContent =
+        t("themaWaehlen");
+
+    container.appendChild(titel);
+
+    const liste =
+        document.createElement("div");
+
+    liste.className = "themen-grid";
+
+    const themen =
+        themenListe[aktuelleKlasse];
+
+    themen.forEach((thema, index) => {
+
+        const button =
+            document.createElement("button");
+
+        button.className = "thema-button";
+
+        button.textContent =
+            `${index + 1}. ${themaSprachwert(thema)}`;
+
+        button.onclick = () =>
+            starteThema(index);
 
         liste.appendChild(button);
+
     });
+
+    container.appendChild(liste);
+
+    const back =
+        document.createElement("button");
+
+    back.textContent = t("zurueck");
+
+    back.onclick = zeigeKlassen;
+
+    container.appendChild(back);
+
 }
 
+// ------------------------------------------------------------
+// THEMA SPRACHE
+// ------------------------------------------------------------
 
-// ============================================================
-// THEMA AUSWÄHLEN
-// ============================================================
+function themaSprachwert(thema) {
 
-function themaAuswaehlen(thema) {
+    if (aktuelleSprache === "en") {
+        return thema[1];
+    }
 
-    aktuellesThema = thema;
+    if (aktuelleSprache === "ps") {
+        return thema[2];
+    }
+
+    return thema[0];
+
+}
+
+// ------------------------------------------------------------
+// THEMA STARTEN
+// ------------------------------------------------------------
+
+function starteThema(themaIndex) {
+
+    aktuellesThema = themaIndex;
+
+    aktuelleFragen =
+        holeFragen(
+            aktuelleKlasse,
+            themaIndex
+        );
+
+    aktuelleFragen =
+        [...aktuelleFragen].slice(0, 30);
+
     aktuelleFrage = 0;
-
-
-    document
-        .getElementById("themen")
-        .classList.add("versteckt");
-
-    document
-        .getElementById("aufgaben")
-        .classList.remove("versteckt");
-
+    punktzahl = 0;
+    antwortGeprueft = false;
 
     zeigeFrage();
+
 }
 
-
-// ============================================================
+// ------------------------------------------------------------
 // FRAGE ANZEIGEN
-// ============================================================
+// ------------------------------------------------------------
 
 function zeigeFrage() {
 
-    const fragen =
-        holeFragen();
+    versteckeAlles();
 
+    const container =
+        el("aufgaben");
 
-    if (!fragen || fragen.length === 0) {
+    if (!container) return;
 
-        document.getElementById("frageText").textContent =
-            aktuelleSprache === "de"
-                ? "Für dieses Thema gibt es noch keine Fragen."
-                : aktuelleSprache === "en"
-                    ? "There are no questions for this topic yet."
-                    : "د دې موضوع لپاره تراوسه پوښتنې نشته.";
+    container.classList.remove("versteckt");
+
+    container.innerHTML = "";
+
+    if (!aktuelleFragen.length) {
+
+        container.innerHTML =
+            `<p>${t("keineFragen")}</p>`;
 
         return;
-    }
 
+    }
 
     const frage =
-        fragen[aktuelleFrage];
+        aktuelleFragen[aktuelleFrage];
 
+    const titel =
+        document.createElement("h2");
 
-    document.getElementById("frageNummer").textContent =
-        aktuelleSprache === "de"
-            ? `Frage ${aktuelleFrage + 1} von ${fragen.length}`
-            : aktuelleSprache === "en"
-                ? `Question ${aktuelleFrage + 1} of ${fragen.length}`
-                : `پوښتنه ${aktuelleFrage + 1} له ${fragen.length}`;
+    titel.textContent =
+        `${t("aufgabe")} ${aktuelleFrage + 1} / ${aktuelleFragen.length}`;
 
+    container.appendChild(titel);
 
-    document.getElementById("frageText").textContent =
-        frage.frage[aktuelleSprache];
+    const text =
+        document.createElement("h3");
 
+    text.textContent =
+        frage[aktuelleSprache];
 
-    let antworten =
-        [...frage.antworten];
+    container.appendChild(text);
 
+    const antworten =
+        document.createElement("div");
 
-    const richtigeAntwort =
-        antworten[frage.richtig];
+    antworten.className =
+        "antworten";
 
+    frage.optionen[aktuelleSprache]
+        .forEach((antwort, index) => {
 
-    // Antworten zufällig mischen
-    for (let i = antworten.length - 1; i > 0; i--) {
+            const button =
+                document.createElement("button");
 
-        const j =
-            Math.floor(Math.random() * (i + 1));
+            button.className =
+                "antwort-button";
 
+            button.textContent =
+                `${String.fromCharCode(65 + index)}. ${antwort}`;
 
-        [
-            antworten[i],
-            antworten[j]
-        ] = [
-            antworten[j],
-            antworten[i]
-        ];
-    }
+            button.dataset.index =
+                index;
 
+            button.onclick = () =>
+                pruefeAntwort(index);
 
-    richtigePosition =
-        antworten.indexOf(richtigeAntwort);
+            antworten.appendChild(button);
 
+        });
 
-    document.getElementById("antwortA").textContent =
-        "A) " + antworten[0][aktuelleSprache];
+    container.appendChild(antworten);
 
-    document.getElementById("antwortB").textContent =
-        "B) " + antworten[1][aktuelleSprache];
+    const feedback =
+        document.createElement("div");
 
-    document.getElementById("antwortC").textContent =
-        "C) " + antworten[2][aktuelleSprache];
+    feedback.id = "feedback";
 
-    document.getElementById("antwortD").textContent =
-        "D) " + antworten[3][aktuelleSprache];
-
-
-    document
-        .getElementById("erklaerung")
-        .classList.add("versteckt");
-
-
-    document
-        .getElementById("weiterButton")
-        .classList.add("versteckt");
-
-
-    antwortGegeben = false;
-}
-
-
-// ============================================================
-// ANTWORT AUSWÄHLEN
-// ============================================================
-
-function antwortAuswaehlen(position) {
-
-    if (antwortGegeben) {
-        return;
-    }
-
-
-    antwortGegeben = true;
-
-
-    const fragen =
-        holeFragen();
-
-    const frage =
-        fragen[aktuelleFrage];
-
+    container.appendChild(feedback);
 
     const erklaerung =
-        document.getElementById("erklaerung");
+        document.createElement("div");
 
+    erklaerung.id =
+        "erklaerung";
 
-    if (position === richtigePosition) {
+    container.appendChild(erklaerung);
 
-        erklaerung.textContent =
-            aktuelleSprache === "de"
-                ? "✅ Richtig! " + frage.erklaerung.de
-                : aktuelleSprache === "en"
-                    ? "✅ Correct! " + frage.erklaerung.en
-                    : "✅ سمه ده! " + frage.erklaerung.ps;
+    const weiter =
+        document.createElement("button");
+
+    weiter.id =
+        "weiterButton";
+
+    weiter.textContent =
+        t("weiter");
+
+    weiter.style.display =
+        "none";
+
+    weiter.onclick =
+        naechsteFrage;
+
+    container.appendChild(weiter);
+
+    const zurueck =
+        document.createElement("button");
+
+    zurueck.textContent =
+        t("zurueck");
+
+    zurueck.onclick =
+        zeigeThemen;
+
+    container.appendChild(zurueck);
+
+}
+
+// ------------------------------------------------------------
+// ANTWORT PRÜFEN
+// ------------------------------------------------------------
+
+function pruefeAntwort(index) {
+
+    if (antwortGeprueft) return;
+
+    antwortGeprueft = true;
+
+    const frage =
+        aktuelleFragen[aktuelleFrage];
+
+    const feedback =
+        el("feedback");
+
+    const erklaerung =
+        el("erklaerung");
+
+    const buttons =
+        document.querySelectorAll(
+            ".antwort-button"
+        );
+
+    buttons.forEach(button => {
+
+        button.disabled = true;
+
+    });
+
+    if (index === frage.richtig) {
+
+        punktzahl++;
+
+        feedback.textContent =
+            t("richtig");
 
     } else {
 
-        erklaerung.textContent =
-            aktuelleSprache === "de"
-                ? "❌ Falsch! " + frage.erklaerung.de
-                : aktuelleSprache === "en"
-                    ? "❌ Incorrect! " + frage.erklaerung.en
-                    : "❌ غلط! " + frage.erklaerung.ps;
+        feedback.textContent =
+            `${t("falsch")} ${t("richtig")}: ${
+                frage.optionen[aktuelleSprache][frage.richtig]
+            }`;
+
     }
 
+    erklaerung.innerHTML =
+        `<strong>${t("erklaerung")}:</strong><br>${frage.erklaerung[aktuelleSprache]}`;
 
-    erklaerung
-        .classList.remove("versteckt");
+    const weiter =
+        el("weiterButton");
 
+    if (weiter) {
 
-    document
-        .getElementById("weiterButton")
-        .classList.remove("versteckt");
+        weiter.style.display =
+            "block";
+
+    }
+
 }
 
-
-// ============================================================
+// ------------------------------------------------------------
 // NÄCHSTE FRAGE
-// ============================================================
+// ------------------------------------------------------------
 
 function naechsteFrage() {
 
-    const fragen =
-        holeFragen();
+    aktuelleFrage++;
 
+    antwortGeprueft = false;
 
-    if (aktuelleFrage < fragen.length - 1) {
+    if (
+        aktuelleFrage >=
+        aktuelleFragen.length
+    ) {
 
-        aktuelleFrage++;
+        zeigeErgebnis();
 
-        zeigeFrage();
+        return;
 
-    } else {
-
-        aufgabenFertig();
     }
+
+    zeigeFrage();
+
 }
 
+// ------------------------------------------------------------
+// ERGEBNIS
+// ------------------------------------------------------------
 
-// ============================================================
-// AUFGABEN FERTIG
-// ============================================================
+function zeigeErgebnis() {
 
-function aufgabenFertig() {
+    versteckeAlles();
 
-    document.getElementById("frageNummer").textContent =
-        aktuelleSprache === "de"
-            ? "🎉 Fertig!"
-            : aktuelleSprache === "en"
-                ? "🎉 Finished!"
-                : "🎉 بشپړ شو!";
+    const container =
+        el("ergebnis");
 
+    if (!container) return;
 
-    document.getElementById("frageText").textContent =
-        aktuelleSprache === "de"
-            ? "Du hast alle Fragen dieses Themas geschafft!"
-            : aktuelleSprache === "en"
-                ? "You completed all questions in this topic!"
-                : "تاسو د دې موضوع ټولې پوښتنې بشپړې کړې!";
+    container.classList.remove("versteckt");
 
+    const prozent =
+        Math.round(
+            (punktzahl /
+                aktuelleFragen.length) *
+                100
+        );
 
-    document
-        .getElementById("erklaerung")
-        .classList.add("versteckt");
+    container.innerHTML = `
 
+        <h2>${t("fertig")}</h2>
 
-    document
-        .getElementById("weiterButton")
-        .classList.add("versteckt");
+        <p>
+            ${punktzahl} /
+            ${aktuelleFragen.length}
+        </p>
+
+        <p>
+            ${prozent}%
+        </p>
+
+        <button id="nochmalButton">
+            ${t("nochmal")}
+        </button>
+
+        <button id="themenButton">
+            ${t("zurueck")}
+        </button>
+
+    `;
+
+    el("nochmalButton").onclick =
+        () => starteThema(aktuellesThema);
+
+    el("themenButton").onclick =
+        zeigeThemen;
+
 }
+
+// ------------------------------------------------------------
+// ABMELDEN
+// ------------------------------------------------------------
+
+async function abmelden() {
+
+    if (supabaseClient) {
+
+        await supabaseClient.auth.signOut();
+
+    }
+
+    aktuelleKlasse = null;
+    aktuellesThema = null;
+    aktuelleFragen = [];
+
+    zeigeStartseite();
+
+}
+
+// ------------------------------------------------------------
+// ALLES VERSTECKEN
+// ------------------------------------------------------------
+
+function versteckeAlles() {
+
+    const ids = [
+        "startseite",
+        "sprachen",
+        "anmeldung",
+        "klassen",
+        "themen",
+        "aufgaben",
+        "ergebnis"
+    ];
+
+    ids.forEach(id => {
+
+        const element = el(id);
+
+        if (element) {
+
+            element.classList.add("versteckt");
+
+        }
+
+    });
+
+}
+
+// ------------------------------------------------------------
+// TEXT SETZEN
+// ------------------------------------------------------------
+
+function setText(id, text) {
+
+    const element = el(id);
+
+    if (element) {
+
+        element.textContent = text;
+
+    }
+
+}
+
+// ------------------------------------------------------------
+// PLACEHOLDER SETZEN
+// ------------------------------------------------------------
+
+function setPlaceholder(id, text) {
+
+    const element = el(id);
+
+    if (element) {
+
+        element.placeholder = text;
+
+    }
+
+}
+
+// ------------------------------------------------------------
+// BEIM LADEN
+// ------------------------------------------------------------
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+        const gespeicherteSprache =
+            localStorage.getItem(
+                "mathelernwelt_sprache"
+            );
+
+        if (gespeicherteSprache) {
+
+            aktuelleSprache =
+                gespeicherteSprache;
+
+        }
+
+        // Supabase Session prüfen
+
+        if (supabaseClient) {
+
+            try {
+
+                const {
+                    data
+                } =
+                    await supabaseClient.auth.getSession();
+
+                if (data.session) {
+
+                    zeigeKlassen();
+
+                    return;
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        }
+
+        // Startseite anzeigen
+
+        zeigeStartseite();
+
+    }
+);
+
+// ------------------------------------------------------------
+// SUPABASE AUTH LISTENER
+// ------------------------------------------------------------
+
+if (supabaseClient) {
+
+    supabaseClient.auth.onAuthStateChange(
+        (event, session) => {
+
+            if (event === "SIGNED_IN") {
+
+                zeigeKlassen();
+
+            }
+
+            if (event === "SIGNED_OUT") {
+
+                zeigeStartseite();
+
+            }
+
+        }
+    );
+
+}
+
+// ------------------------------------------------------------
+// FUNKTIONEN GLOBAL VERFÜGBAR MACHEN
+// ------------------------------------------------------------
+
+window.zeigeStartseite =
+    zeigeStartseite;
+
+window.zeigeSprachen =
+    zeigeSprachen;
+
+window.spracheAuswaehlen =
+    spracheAuswaehlen;
+
+window.anmelden =
+    anmelden;
+
+window.registrieren =
+    registrieren;
+
+window.abmelden =
+    abmelden;
+
+window.zeigeKlassen =
+    zeigeKlassen;
+
+window.zeigeThemen =
+    zeigeThemen;
+
+window.waehleKlasse =
+    waehleKlasse;
+
+window.starteThema =
+    starteThema;
+
+window.pruefeAntwort =
+    pruefeAntwort;
+
+window.naechsteFrage =
+    naechsteFrage;
